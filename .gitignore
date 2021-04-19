@@ -3,3 +3,4 @@
 build/
 
 *.bag
+catkin_ws/*.bag
