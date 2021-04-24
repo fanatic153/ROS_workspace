@@ -2,5 +2,13 @@
 
 build/
 
+
+
+catkin_ws/build
+turtlebot_ws/build
+
+
+
 *.bag
 catkin_ws/*.bag
+turtlebot_ws/*.bag
