@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+
+<sdf version="1.5">
+    <model name="room">
+        <static>1</static>
+        <link name="link">
+            <collision name='collision1'>
+                <geometry>
+                    <mesh>
+                        <uri>model://room/meshes/IEC_room.dae</uri>
+                        <scale>0.01 0.01 0.01</scale>
+                    </mesh>
+                </geometry>
+                <max_contacts>10</max_contacts>
+                <surface>
+                    <bounce/>
+                    <friction>
+                    <ode/>
+                    </friction>
+                    <contact>
+                    <ode/>
+                    </contact>
+                </surface>
+            </collision>
+
+            <visual name='visual1'>
+                <geometry>
+                    <mesh>
+                        <uri>model://room/meshes/IEC_room.dae</uri>
+                        <scale>0.01 0.01 0.01</scale>
+                    </mesh>
+                </geometry>
+            </visual>   
+        </link>
+    </model>
+</sdf>
+
