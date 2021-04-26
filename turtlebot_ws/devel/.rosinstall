@@ -1,0 +1,2 @@
+- setup-file:
+    local-name: /home/janet/ROS_workspace/turtlebot_ws/devel/setup.sh
