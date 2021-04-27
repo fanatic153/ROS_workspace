@@ -43,10 +43,11 @@
 class Turtlebot3Drive
 {
  public:
-  Turtlebot3Drive();
-  ~Turtlebot3Drive();
-  bool init();
-  bool controlLoop();
+    Turtlebot3Drive();
+    ~Turtlebot3Drive();
+    bool init();
+    bool controlLoop();
+    void showSensorData();
 
  private:
   // ROS NodeHandle

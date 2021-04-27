@@ -156,6 +156,19 @@ bool Turtlebot3Drive::controlLoop()
   return true;
 }
 
+
+void Turtlebot3Drive::showSensorData()
+{
+  std::cout << "scan data = \n";
+  std::cout << "  " << scan_data_[LEFT] << "\n";
+  std::cout << "  " << scan_data_[CENTER] << "\n";
+  std::cout << "  " << scan_data_[RIGHT] << "\n";
+  std::cout << "pose = \n"; 
+  std::cout << "  " << tb3_pose_ << "\n";
+  std::cout << "  " << prev_tb3_pose_ << "\n";
+}
+
+
 /*******************************************************************************
 * Main function
 *******************************************************************************/
@@ -166,9 +179,19 @@ int main(int argc, char* argv[])
 
   ros::Rate loop_rate(125);
 
+  int count = 0;
   while (ros::ok())
-  {
+  {    
     turtlebot3_drive.controlLoop();
+
+    count++;
+    if (count >= 100)
+    {
+      turtlebot3_drive.showSensorData();
+      count = 0;
+    }
+    
+
     ros::spinOnce();
     loop_rate.sleep();
   }
