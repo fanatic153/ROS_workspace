@@ -21,7 +21,8 @@
         <pose>-0.064 0 0.048 0 0 0</pose>
         <geometry>
           <box>
-            <size>0.265 0.265 0.089</size>
+            <!-- <size>0.265 0.265 0.089</size> -->
+            <scale>0.01 0.01 0.01</scale>
           </box>
         </geometry>
       </collision>
@@ -31,7 +32,9 @@
         <geometry>
           <mesh>
             <uri>model://turtlebot3_common_meshes/waffle_pi_base.dae</uri>
-            <scale>0.001 0.001 0.001</scale>
+            <!-- <scale>1 1 1</scale> -->
+            <scale>0.01 0.01 0.01</scale>
+            <!-- <scale>0.001 0.001 0.001</scale> -->
           </mesh>
         </geometry>
       </visual>

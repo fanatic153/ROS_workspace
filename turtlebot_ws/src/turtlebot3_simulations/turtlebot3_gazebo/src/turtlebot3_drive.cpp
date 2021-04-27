@@ -69,6 +69,7 @@ void Turtlebot3Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg)
 
 void Turtlebot3Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)
 {
+  // Lidar have 360 degree of data, we take only three value
   uint16_t scan_angle[3] = {0, 30, 330};
 
   for (int num = 0; num < 3; num++)

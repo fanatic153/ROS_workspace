@@ -8,7 +8,8 @@
                 <geometry>
                     <mesh>
                         <uri>model://room/meshes/IEC_room.dae</uri>
-                        <scale>0.01 0.01 0.01</scale>
+                        <scale>0.005 0.005 0.005</scale>
+                        <!-- <scale>0.005 0.005 0.005</scale> -->
                     </mesh>
                 </geometry>
                 <max_contacts>10</max_contacts>
@@ -27,7 +28,7 @@
                 <geometry>
                     <mesh>
                         <uri>model://room/meshes/IEC_room.dae</uri>
-                        <scale>0.01 0.01 0.01</scale>
+                        <scale>0.005 0.005 0.005</scale>
                     </mesh>
                 </geometry>
             </visual>   
