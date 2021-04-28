@@ -164,7 +164,7 @@ void Turtlebot3Drive::showSensorData()
   std::cout << "  " << scan_data_[LEFT] << "\n";
   std::cout << "  " << scan_data_[CENTER] << "\n";
   std::cout << "  " << scan_data_[RIGHT] << "\n";
-  std::cout << "pose = \n"; 
+  std::cout << "pose, prev = \n"; 
   std::cout << "  " << tb3_pose_ << "\n";
   std::cout << "  " << prev_tb3_pose_ << "\n";
 }

@@ -1,0 +1,8 @@
+<launch>
+    <param name="/frq" type="double" value="2.0" />
+    <node name="cpp_pub_node" pkg="topic_test" type="pubcpp" />
+
+    <include file="$(find topic_test)/launch/sub.launch" />
+    <!-- <node name="spp_sub_node" pkg="topic_test" type="subcpp" /> -->
+    
+</launch>

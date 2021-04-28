@@ -1,2 +1,2 @@
 - setup-file:
-    local-name: /home/janet/ros_ws/catkin_ws/devel/setup.sh
+    local-name: /home/janet/ROS_workspace/catkin_ws/devel/setup.sh

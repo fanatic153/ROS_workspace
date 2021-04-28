@@ -1,0 +1,6 @@
+<launch>
+
+    <node name="cpp_sub_node" pkg="topic_test" type="subcpp" />
+    <node name="python_sub_node" pkg="topic_test" type="subscriber.py" />
+
+</launch>
