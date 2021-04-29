@@ -39,7 +39,7 @@ int main(int argc, char * argv[]) {
     tf::StampedTransform transform;
     try
     {
-        listener.lookupTransform("/odom", "/base_footprint",   
+        listener.lookupTransform("/grid", "/base_footprint",   
                                 ros::Time(0), transform);
     }
     catch (tf::TransformException ex)
@@ -50,21 +50,22 @@ int main(int argc, char * argv[]) {
 
     
     std::cout << "get: " << transform.getOrigin().x() << ", " << transform.getOrigin().y() << "\n";
-    
-    // int x = (-1*transform.getOrigin().x())/MAP_RES - map.info.origin.position.x;
-    // int y = transform.getOrigin().y()/MAP_RES - map.info.origin.position.y;
-    int x = (-1*transform.getOrigin().x() - map.info.origin.position.x)/MAP_RES;
-    int y = (transform.getOrigin().y() - map.info.origin.position.y)/MAP_RES;
+       
+    double x = transform.getOrigin().x();
+    double y = transform.getOrigin().y();
+
+    double x = (transform.getOrigin().x() - map.info.origin.position.x)/MAP_RES;
+    double y = (transform.getOrigin().y() - map.info.origin.position.y)/MAP_RES;
     
     std::cout << "trans: " << x << ", " << y << "\n";
 
-    int pos = x + y*MAP_H;
+    int pos = x + y*(double)MAP_H;
     // int pos = x*MAP_W + y;
     std::cout << pos << "\n";
-    p[pos] = 100;        
-    std::vector<signed char> a(p, p+MAP_W*MAP_H);
-    map.data = a;
-    pub.publish(map);
+    // p[pos] = 100;        
+    // std::vector<signed char> a(p, p+MAP_W*MAP_H);
+    // map.data = a;
+    // pub.publish(map);
 
 
     // if (cnt <= MAP_W*MAP_H)
@@ -82,10 +83,12 @@ int main(int argc, char * argv[]) {
     // p[1*500+1] = 100;   
     // p[499*500+0] = 100;  
     // p[499*500+249] = 100;   
-    // p[499*500+499] = 100;  
-    // std::vector<signed char> a(p, p+MAP_W*MAP_H);
-    // map.data = a;
-    // pub.publish(map);
+    // p[110260] = 100;  
+    p[122569] = 100;  
+    p[122732] = 100;  
+    std::vector<signed char> a(p, p+MAP_W*MAP_H);
+    map.data = a;
+    pub.publish(map);
     
     
     rate.sleep();
