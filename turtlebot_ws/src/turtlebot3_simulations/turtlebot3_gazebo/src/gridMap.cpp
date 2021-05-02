@@ -4,6 +4,9 @@
 #include "nav_msgs/OccupancyGrid.h"
 #include <tf/transform_listener.h>
 #include <tf/transform_broadcaster.h>
+#include <cmath>
+#include<iomanip>
+
 
 #define MAP_RES 0.1
 #define MAP_W 500   // want if resolution = 1; MAP = 50*50 => map size = 50/RES
@@ -50,22 +53,21 @@ int main(int argc, char * argv[]) {
 
     
     std::cout << "get: " << transform.getOrigin().x() << ", " << transform.getOrigin().y() << "\n";
-       
-    double x = transform.getOrigin().x();
-    double y = transform.getOrigin().y();
 
     double x = (transform.getOrigin().x() - map.info.origin.position.x)/MAP_RES;
     double y = (transform.getOrigin().y() - map.info.origin.position.y)/MAP_RES;
     
     std::cout << "trans: " << x << ", " << y << "\n";
-
+    std::cout << "trans: " << round(x) << ", " << round(y) << "\n";
+    
+    x = round(x); y = round(y); 
     int pos = x + y*(double)MAP_H;
     // int pos = x*MAP_W + y;
     std::cout << pos << "\n";
-    // p[pos] = 100;        
-    // std::vector<signed char> a(p, p+MAP_W*MAP_H);
-    // map.data = a;
-    // pub.publish(map);
+    p[pos] = 100;        
+    std::vector<signed char> a(p, p+MAP_W*MAP_H);
+    map.data = a;
+    pub.publish(map);
 
 
     // if (cnt <= MAP_W*MAP_H)
@@ -76,28 +78,21 @@ int main(int argc, char * argv[]) {
     //     pub.publish(map);
     // }
     // cnt++;
-    // p[0] = 100;   
-    // p[250-1] = 100;   
-    // p[500-1] = 100;   
 
+
+    // p[0] = 100;
+    // p[500-1] = 100;   
     // p[1*500+1] = 100;   
     // p[499*500+0] = 100;  
-    // p[499*500+249] = 100;   
-    // p[110260] = 100;  
-    p[122569] = 100;  
-    p[122732] = 100;  
-    std::vector<signed char> a(p, p+MAP_W*MAP_H);
-    map.data = a;
-    pub.publish(map);
+    // p[499*500+249] = 100; 
+    // std::vector<signed char> a(p, p+MAP_W*MAP_H);
+    // map.data = a;
+    // pub.publish(map);
     
     
     rate.sleep();
   }
 
-//   while (ros::ok())
-//   {
-//       pub.publish(map);
-//   }
 
   ros::shutdown();
   return 0;

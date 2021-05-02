@@ -19,8 +19,8 @@
 
   <node name="grid_tf_node" pkg="turtlebot3_gazebo" type="grid_tf_pub.py"/>
 
-  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" /> -->
-  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" />
+  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" />
+  <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" /> -->
 
   <!-- <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" /> -->
 
@@ -29,3 +29,4 @@
   
 </launch>
 
+<!-- export TURTLEBOT3_MODEL=waffle_pi -->
