@@ -9,8 +9,8 @@
 
 
 #define MAP_RES 0.1
-#define MAP_W 500   // want if resolution = 1; MAP = 50*50 => map size = 50/RES
-#define MAP_H 500
+#define MAP_W 300   // want if resolution = 1; MAP = 50*50 => map size = 50/RES
+#define MAP_H 300
 
 
 
@@ -29,8 +29,8 @@ int main(int argc, char * argv[]) {
   map.info.resolution = MAP_RES;         // float32
   map.info.width      = MAP_W;           // uint32
   map.info.height     = MAP_H;           // uint32
-  map.info.origin.position.x = -25; //-(MAP_W/MAP_RES) / 2; //-10;
-  map.info.origin.position.y = -25; //-MAP_H / 2; //-10;
+  map.info.origin.position.x = -(MAP_W*MAP_RES) / 2; //-10;
+  map.info.origin.position.y = -(MAP_H*MAP_RES) / 2; //-10;
   
   int p[map.info.width*map.info.height] = {-1};   // [0,100]
 

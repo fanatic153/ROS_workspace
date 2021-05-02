@@ -18,6 +18,7 @@
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model turtlebot3 -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
 
   <node name="grid_tf_node" pkg="turtlebot3_gazebo" type="grid_tf_pub.py"/>
+  <node name="gridMAp_node" pkg="turtlebot3_gazebo" type="gridMap"/>
 
   <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" />
   <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" /> -->
