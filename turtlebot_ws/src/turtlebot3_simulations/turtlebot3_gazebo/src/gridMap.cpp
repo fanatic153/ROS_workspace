@@ -9,8 +9,8 @@
 
 
 #define MAP_RES 0.1
-#define MAP_W 300   // want if resolution = 1; MAP = 50*50 => map size = 50/RES
-#define MAP_H 300
+#define MAP_W 400   // want if resolution = 1; MAP = 50*50 => map size = 50/RES
+#define MAP_H 400
 
 
 

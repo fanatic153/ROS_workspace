@@ -1,7 +1,7 @@
 <launch>
   <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
-  <arg name="x_pos" default="-3.0"/>
-  <arg name="y_pos" default="1.0"/>
+  <arg name="x_pos" default="0.0"/>
+  <arg name="y_pos" default="0.0"/>
   <arg name="z_pos" default="0.0"/>
 
   <include file="$(find gazebo_ros)/launch/empty_world.launch">
@@ -20,8 +20,8 @@
   <node name="grid_tf_node" pkg="turtlebot3_gazebo" type="grid_tf_pub.py"/>
   <node name="gridMAp_node" pkg="turtlebot3_gazebo" type="gridMap"/>
 
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" />
-  <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" /> -->
+  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" /> -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" />
 
   <!-- <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" /> -->
 
@@ -31,3 +31,4 @@
 </launch>
 
 <!-- export TURTLEBOT3_MODEL=waffle_pi -->
+<!-- cp ~/share/IEC_room.dae src/turtlebot3_simulations/turtlebot3_gazebo/models/room/meshes/IEC_room.dae -->
