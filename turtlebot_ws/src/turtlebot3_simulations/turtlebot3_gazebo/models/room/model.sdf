@@ -7,7 +7,7 @@
             <collision name='collision1'>
                 <geometry>
                     <mesh>
-                        <uri>model://room/meshes/IEC_room.dae</uri>
+                        <uri>model://room/meshes/IEC_room.obj</uri>
                         <scale>0.001 0.001 0.001</scale>
                         <!-- <scale>0.005 0.005 0.005</scale> -->
                     </mesh>
@@ -27,23 +27,11 @@
             <visual name='visual1'>
                 <geometry>
                     <mesh>
-                        <uri>model://room/meshes/IEC_room.dae</uri>
-                        <scale>0.001 0.001 0.001</scale>
+                        <uri>model://room/meshes/IEC_room.obj</uri>
+                        <scale>0.001 0.001 0.001</scale>                        
                     </mesh>
                 </geometry>
-                <material>
-                    <script>
-                        <uri>file://media/materials/scripts/gazebo.material</uri>
-                        <name>Gazebo/Wood</name>
-                        <!-- <name>Gazebo/PaintedWall</name> -->
-                    </script>
-                    <ambient>1 1 1 1</ambient>
-                    <diffuse>1 1 1 1</diffuse>
-                    <specular>0.2 0.2 0.2 1</specular>
-                    <emissive>0 0 0 1</emissive>
-                </material>
             </visual>   
         </link>
     </model>
 </sdf>
-

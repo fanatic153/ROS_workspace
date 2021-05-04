@@ -36,6 +36,7 @@
     <!-- Load world -->
     <include>
       <uri>model://room</uri>
+      <pose>0 0 0 1.57 0 0</pose>
     </include>
 
     <!--
