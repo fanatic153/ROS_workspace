@@ -43,8 +43,8 @@ bool Turtlebot3Drive::init()
 
   // initialize variables
   escape_range_       = 30.0 * DEG2RAD;
-  check_forward_dist_ = 0.7;
-  check_side_dist_    = 0.6;
+  check_forward_dist_ = 1; //0.7;
+  check_side_dist_    = 0.9; //0.6;
 
   tb3_pose_ = 0.0;
   prev_tb3_pose_ = 0.0;
@@ -107,22 +107,25 @@ bool Turtlebot3Drive::controlLoop()
     case GET_TB3_DIRECTION:
       if (scan_data_[CENTER] > check_forward_dist_)
       {
+        // hit right corner
         if (scan_data_[LEFT] < check_side_dist_)
         {
           prev_tb3_pose_ = tb3_pose_;
           turtlebot3_state_num = TB3_RIGHT_TURN;
         }
+        // hit left corner
         else if (scan_data_[RIGHT] < check_side_dist_)
         {
           prev_tb3_pose_ = tb3_pose_;
           turtlebot3_state_num = TB3_LEFT_TURN;
         }
-        else
+        // not hitting anything, go forward
+        else  
         {
           turtlebot3_state_num = TB3_DRIVE_FORWARD;
         }
       }
-
+      // hit the front
       if (scan_data_[CENTER] < check_forward_dist_)
       {
         prev_tb3_pose_ = tb3_pose_;
@@ -136,14 +139,14 @@ bool Turtlebot3Drive::controlLoop()
       break;
 
     case TB3_RIGHT_TURN:
-      if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_)
+      if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_+ (rand()%10)*DEG2RAD )
         turtlebot3_state_num = GET_TB3_DIRECTION;
       else
         updatecommandVelocity(0.0, -1 * ANGULAR_VELOCITY);
       break;
 
     case TB3_LEFT_TURN:
-      if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_)
+      if (fabs(prev_tb3_pose_ - tb3_pose_) >= escape_range_ + (rand()%10)*DEG2RAD)
         turtlebot3_state_num = GET_TB3_DIRECTION;
       else
         updatecommandVelocity(0.0, ANGULAR_VELOCITY);
@@ -164,7 +167,7 @@ void Turtlebot3Drive::showSensorData()
   std::cout << "  " << scan_data_[LEFT] << "\n";
   std::cout << "  " << scan_data_[CENTER] << "\n";
   std::cout << "  " << scan_data_[RIGHT] << "\n";
-  std::cout << "pose = \n"; 
+  std::cout << "pose, prev = \n"; 
   std::cout << "  " << tb3_pose_ << "\n";
   std::cout << "  " << prev_tb3_pose_ << "\n";
 }
@@ -180,6 +183,7 @@ int main(int argc, char* argv[])
 
   ros::Rate loop_rate(125);
 
+  srand( time(NULL) );
   int count = 0;
   while (ros::ok())
   {    

@@ -8,7 +8,7 @@
                 <geometry>
                     <mesh>
                         <uri>model://room/meshes/IEC_room.dae</uri>
-                        <scale>0.003 0.003 0.005</scale>
+                        <scale>0.001 0.001 0.001</scale>
                         <!-- <scale>0.005 0.005 0.005</scale> -->
                     </mesh>
                 </geometry>
@@ -28,13 +28,14 @@
                 <geometry>
                     <mesh>
                         <uri>model://room/meshes/IEC_room.dae</uri>
-                        <scale>0.003 0.003 0.005</scale>
+                        <scale>0.001 0.001 0.001</scale>
                     </mesh>
                 </geometry>
                 <material>
                     <script>
                         <uri>file://media/materials/scripts/gazebo.material</uri>
                         <name>Gazebo/Wood</name>
+                        <!-- <name>Gazebo/PaintedWall</name> -->
                     </script>
                     <ambient>1 1 1 1</ambient>
                     <diffuse>1 1 1 1</diffuse>

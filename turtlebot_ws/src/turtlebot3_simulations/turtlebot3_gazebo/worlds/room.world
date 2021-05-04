@@ -8,7 +8,7 @@
     <!-- A ground plane -->
     <include>
       <uri>model://ground_plane</uri>
-      <pose>2 2 2 0 0 0</pose>
+      <pose>2 2 0 0 0 0</pose>
     </include>
 
     <physics type="ode">
