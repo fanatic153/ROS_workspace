@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<robot name="pr100" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    
+    <!-- property variables -->    
+    <xacro:property name="PI" value="3.1415926535897931"/>
+
+    <!-- 0.1*0.4*0.2 * 50 -->
+    <xacro:property name="chassisHeight" value="0.3"/>  
+    <xacro:property name="chassisLength" value="0.3"/>
+    <xacro:property name="chassisWidth" value="0.3"/>
+    <xacro:property name="chassisMass" value="50"/>
+
+    <xacro:property name="casterRadius" value="0.05"/>
+    <xacro:property name="casterMass" value="5"/>
+
+    <!-- 0.05*0.1*0.5 * 5 -->
+    <xacro:property name="wheelWidth" value="0.01"/>
+    <xacro:property name="wheelRadius" value="0.05"/>
+    <xacro:property name="wheelPos" value="-0.2"/>
+    <xacro:property name="wheelMass" value="5"/>
+
+    <xacro:property name="cameraSize" value="0.05"/>
+    <xacro:property name="cameraMass" value="0.1"/>
+
+    <!-- include files --> 
+    <xacro:include filename="$(find pr100_description)/urdf/pr100.gazebo" />
+    <xacro:include filename="$(find pr100_description)/urdf/materials.xacro" />
+    <xacro:include filename="$(find pr100_description)/urdf/macros.xacro" />
+
+    <!-- footprint: physic engine does not accept a base_link with inertia, make a joint between it and the chassis --> 
+    <link name="footprint"/>    
+
+    <!-- robot base link: chassis --> 
+    <link name='chassis'>
+        <collision> 
+            <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+            </geometry> 
+        </collision>
+        <visual> 
+            <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <geometry> 
+            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+            </geometry> 
+            <material name="white"/>
+        </visual>
+        <inertial> 
+            <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
+            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <mass value="${chassisMass}"/> 
+            <xacro:box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
+        </inertial>
+    </link>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="footprint"/>
+        <child link="chassis"/>
+    </joint>
+
+    <!-- caster_wheel -->    
+    <link name="caster_wheel">
+        <collision>
+            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <geometry>
+            <sphere radius="${casterRadius}"/>
+            </geometry>
+        </collision>
+        
+        <visual>
+            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <geometry>
+            <sphere radius="${casterRadius}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+
+        <inertial>
+            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <mass value="${casterMass}"/>
+            <xacro:sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+        </inertial>
+    </link>
+
+    <joint name="fixed" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel"/>
+    </joint>
+
+    
+    <!-- right wheel link --> 
+    <!-- right wheel joint --> 
+    <xacro:wheel lr="right" tY="-0.5"/>
+
+    <!-- left wheel link --> 
+    <!-- left wheel joint --> 
+    <xacro:wheel lr="left" tY="0.5"/>
+    
+
+    <!-- sensor --> 
+    <!-- Hokuyo Laser -->
+    <link name="hokuyo">
+        <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>        
+        <geometry>
+        <box size="0.1 0.1 0.1"/>
+        </geometry>
+        </collision>
+
+        <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>    
+        <geometry>
+            <mesh filename="package://pr100_description/meshes/hokuyo.dae"/>
+        </geometry>
+        </visual>
+
+        <inertial>
+        <mass value="1e-5" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>        
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <joint name="hokuyo_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <!-- <origin xyz=".15 0 .1" rpy="0 0 0"/> -->        
+        <origin xyz="0 0 ${chassisHeight/2+chassisHeight*0.01}" rpy="0 0 0"/>
+        <parent link="chassis"/>
+        <child link="hokuyo"/>
+    </joint>
+
+    
+
+
+
+
+
+
+
+
+
+
+</robot>
