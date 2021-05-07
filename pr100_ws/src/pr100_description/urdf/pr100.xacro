@@ -22,6 +22,8 @@
     <xacro:property name="cameraSize" value="0.05"/>
     <xacro:property name="cameraMass" value="0.1"/>
 
+    <xacro:property name="sonarSize" value="0.1"/>
+
     <!-- include files --> 
     <xacro:include filename="$(find pr100_description)/urdf/pr100.gazebo" />
     <xacro:include filename="$(find pr100_description)/urdf/materials.xacro" />
@@ -132,14 +134,45 @@
     </joint>
 
     
+    <!-- Camera -->
+    <link name="camera">
+        <collision>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+        </geometry>
+        </collision>
 
+        <visual>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <geometry>
+            <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+        </geometry>
+        <material name="green"/>
+        </visual>
 
+        <inertial>
+        <mass value="${cameraMass}" />
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
 
-
-
-
+    <joint name="camera_joint" type="fixed">
+        <axis xyz="0 1 0" />
+        <origin xyz="${chassisWidth/2} 0 0" rpy="0 0 0"/>
+        <parent link="chassis"/>
+        <child link="camera"/>
+    </joint>
+    
 
 
 
 
 </robot>
+
+
+
+
+
