@@ -1,10 +1,12 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<!-- <?xml version="1.0" encoding="UTF-8"?> -->
 <launch>
 
     <include file="$(find gazebo_ros)/launch/empty_world.launch">        
         <arg name="world_name" value="$(find pr100_gazebo)/worlds/my_world.world"/>        
-        <arg name="gui" value="true"/>      
+        <arg name="gui" value="true"/>     
+        <arg name="debug" value="false"/>  
     </include>
+  
 
     <!-- call the xacro script to convert of xacro description into an actual URDF -->
     <!-- “robot_description” (this is a standard name used by many ROS tools). -->
@@ -12,8 +14,14 @@
     <!-- <param name="robot_description" command="$(find xacro)/xacro 'pr100.xacro'"/> -->
     <param name="robot_description" command="$(find xacro)/xacro '$(find pr100_description)/urdf/pr100.xacro'"/>
 
+    <arg name="x_pos" default="0.0"/>
+    <arg name="y_pos" default="0.0"/>
+    <arg name="z_pos" default="0.0"/>    
     <node name="pr100_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
-        args="-urdf -param robot_description -model pr100" />
+        args="-urdf -param robot_description -model pr100 -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos)" />
+
+    <!-- <node name="pr100_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
+        args="-urdf -param robot_description -model pr100" /> -->
 
 </launch>
 

@@ -1,11 +1,10 @@
-<?xml version="1.0" ?>
-<sdf version="1.4">
+<sdf version="1.6">
   <!-- We use a custom world for the rrbot so that the camera angle is launched correctly -->
 
   <world name="myworld">
-    <!--include>
+    <!-- <include>
       <uri>model://willowgarage</uri>
-    </include-->
+    </include> -->
 
     <include>
       <uri>model://ground_plane</uri>
@@ -15,6 +14,21 @@
     <include>
       <uri>model://sun</uri>
     </include>
+
+    <!-- Load world -->
+    <include>
+      <uri>model://room</uri>
+      <pose>0 0 0 1.57 0 0</pose>
+    </include> 
+
+    <!--
+    <include>
+      <uri>model://postbox</uri>
+      <static>true</static>
+      <pose>1 1 0 0 0 0</pose>
+    </include>
+    -->
+    
 
 
   </world>
