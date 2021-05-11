@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<launch>
+
+ 
+  <!-- Combine joint values -->
+  <node name="pr100_drive_node" pkg="pr100_drive_control" type="pr100_drive"/>
+
+ 
+</launch>
