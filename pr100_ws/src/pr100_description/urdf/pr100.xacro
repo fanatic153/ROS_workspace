@@ -102,60 +102,88 @@
     
 
     <!-- sensor --> 
-    <!-- Hokuyo Laser -->
-    <link name="hokuyo">
+    
+    <!-- sonar (ultrasonic) -->    
+    <link name="sonar1">
         <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>        
-        <geometry>
-        <box size="0.1 0.1 0.1"/>
-        </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
         </collision>
-
         <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>    
-        <geometry>
-            <mesh filename="package://pr100_description/meshes/hokuyo.dae"/>
-        </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="black"/>
         </visual>
-
         <inertial>
-        <mass value="1e-5" />
-        <origin xyz="0 0 0" rpy="0 0 0"/>        
-        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>        
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
         </inertial>
     </link>
 
-    <joint name="hokuyo_joint" type="fixed">
-        <axis xyz="0 1 0" />
-        <!-- <origin xyz=".15 0 .1" rpy="0 0 0"/> -->        
-        <origin xyz="0 0 ${chassisHeight/2+chassisHeight*0.01}" rpy="0 0 0"/>
+    <joint name="sonar_joint1" type="fixed">
+        <axis xyz="0 1 0" />        
+        <origin xyz="${chassisHeight/2} ${chassisHeight/3} ${chassisHeight/3+chassisHeight*0.01}" rpy="0 0 0"/>
         <parent link="chassis"/>
-        <child link="hokuyo"/>
+        <child link="sonar1"/>
+    </joint>
+
+    <!-- sonar (ultrasonic) -->    
+    <link name="sonar2">
+        <collision>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
+        </collision>
+        <visual>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="0.01 0.01 0.01"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+        <inertial>
+            <mass value="1e-5" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>        
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+        </inertial>
+    </link>
+
+    <joint name="sonar_joint2" type="fixed">
+        <axis xyz="0 1 0" />        
+        <origin xyz="${chassisHeight/2} ${-chassisHeight/3} ${chassisHeight/3+chassisHeight*0.01}" rpy="0 0 0"/>
+        <parent link="chassis"/>
+        <child link="sonar2"/>
     </joint>
 
     
     <!-- Camera -->
     <link name="camera">
         <collision>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-            <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
-        </geometry>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+            </geometry>
         </collision>
 
         <visual>
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <geometry>
-            <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
-        </geometry>
-        <material name="green"/>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <geometry>
+                <box size="${cameraSize} ${cameraSize} ${cameraSize}"/>
+            </geometry>
+            <material name="green"/>
         </visual>
 
         <inertial>
-        <mass value="${cameraMass}" />
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
-        <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
+            <mass value="${cameraMass}" />
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <box_inertia m="${cameraMass}" x="${cameraSize}" y="${cameraSize}" z="${cameraSize}" />
+            <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
         </inertial>
     </link>
 
@@ -166,13 +194,10 @@
         <child link="camera"/>
     </joint>
     
+    
 
 
 
 
 </robot>
-
-
-
-
 
