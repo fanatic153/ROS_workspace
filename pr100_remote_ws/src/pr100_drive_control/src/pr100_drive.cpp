@@ -40,12 +40,17 @@ class Pr100Drive
     ros::NodeHandle nh;
     ros::Subscriber odom_sub;
     ros::Subscriber laser_sub;
+    ros::Subscriber sonar1_sub;
+    ros::Subscriber sonar2_sub;
     ros::Publisher cmd_vel_pub;
 
     double pose;
     double scan_data_[3] = {0.0, 0.0, 0.0};
+    double range1, range2;
 
     void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+    void sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
+    void sonar2MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
     void updatecommandVelocity(double linear, double angular);
     
@@ -67,13 +72,17 @@ void Pr100Drive::init(void)
 {    
     // initialize subscriber
     laser_sub = nh.subscribe("/pr100/laser/scan", 10, &Pr100Drive::laserScanMsgCallBack, this);
+    
+    sonar1_sub = nh.subscribe("/pr100/sonar1", 10, &Pr100Drive::sonar1MsgCallBack, this);
+    sonar2_sub = nh.subscribe("/pr100/sonar2", 10, &Pr100Drive::sonar2MsgCallBack, this);
     odom_sub = nh.subscribe("odom", 10, &Pr100Drive::odomMsgCallBack, this);
 
     // initialize publishers
     cmd_vel_pub   = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
 }
 
-void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)    {
+void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)    
+{
     // Lidar have 360 degree of data, we take only three value
     uint16_t scan_angle[3] = {0, 30, 330};
     
@@ -92,6 +101,16 @@ void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &ms
             // std::cout << "  " << scan_data_[num] << "\n";
         }
     }
+}
+
+void Pr100Drive::sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+{
+    range1 = msg->range;
+}
+
+void Pr100Drive::sonar2MsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
+{
+    range2 = msg->range;
 }
 
 void Pr100Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg)
@@ -134,6 +153,11 @@ void Pr100Drive::showSensorData(void)
     std::cout << "  " << scan_data_[LEFT] << "\n";
     std::cout << "  " << scan_data_[CENTER] << "\n";
     std::cout << "  " << scan_data_[RIGHT] << "\n";
+
+    std::cout << "sonar1, sonar2 = \n"; 
+    std::cout << "  " << range1 << "\n";
+    std::cout << "  " << range2 << "\n";
+
     std::cout << "pose, prev = \n"; 
     std::cout << "  " << pose << "\n";
     // std::cout << "  " << prev_tb3_pose_ << "\n";
@@ -155,7 +179,7 @@ int main(int argc, char* argv[])
     int count = 0;
     while (ros::ok())
     {    
-        pr100_drive->controlLoop();
+        // pr100_drive->controlLoop();
 
         count++;
         if (count >= 100)
