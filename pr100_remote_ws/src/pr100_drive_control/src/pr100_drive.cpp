@@ -22,7 +22,7 @@
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 
-#define DISTANCE_THRESH 0.5
+#define DISTANCE_THRESH 0.3//0.5
 
 class Pr100Drive
 {
@@ -134,9 +134,23 @@ void Pr100Drive::updatecommandVelocity(double linear, double angular)
   cmd_vel_pub.publish(cmd_vel);
 }
 
+// void Pr100Drive::controlLoop(void)
+// {
+//     if (scan_data_[LEFT] < DISTANCE_THRESH || scan_data_[CENTER] < DISTANCE_THRESH || scan_data_[RIGHT] < DISTANCE_THRESH)
+//     {
+//         updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
+//         // std::cout << "Turn!\n";
+//     }
+//     else
+//     {
+//         updatecommandVelocity(LINEAR_VELOCITY , 0.0);    
+//         // std::cout << "GO!\n";
+//     }
+// }
+
 void Pr100Drive::controlLoop(void)
 {
-    if (scan_data_[LEFT] < DISTANCE_THRESH || scan_data_[CENTER] < DISTANCE_THRESH || scan_data_[RIGHT] < DISTANCE_THRESH)
+    if (range1 < DISTANCE_THRESH || range1 < DISTANCE_THRESH)
     {
         updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
         // std::cout << "Turn!\n";
@@ -180,7 +194,7 @@ int main(int argc, char* argv[])
     int count = 0;
     while (ros::ok())
     {    
-        // pr100_drive->controlLoop();
+        pr100_drive->controlLoop();
 
         count++;
         if (count >= 100)

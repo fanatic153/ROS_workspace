@@ -188,7 +188,8 @@
     </link>
 
     <joint name="camera_joint" type="fixed">
-        <axis xyz="0 1 0" />
+        <axis xyz="1 0 0" />
+        <!-- <axis xyz="0 1 0" /> -->
         <origin xyz="${chassisWidth/2} 0 0" rpy="0 0 0"/>
         <parent link="chassis"/>
         <child link="camera"/>
