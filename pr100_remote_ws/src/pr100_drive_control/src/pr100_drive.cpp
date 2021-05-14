@@ -1,7 +1,7 @@
 
 #include <ros/ros.h>
 
-#include <sensor_msgs/LaserScan.h>
+// #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/Range.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
@@ -22,7 +22,7 @@
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 
-#define DISTANCE_THRESH 0.3//0.5
+#define DISTANCE_THRESH 0.42 //0.5
 
 class Pr100Drive
 {
@@ -40,16 +40,16 @@ class Pr100Drive
     // Variables
     ros::NodeHandle nh;
     ros::Subscriber odom_sub;
-    ros::Subscriber laser_sub;
+    // ros::Subscriber laser_sub;
     ros::Subscriber sonar1_sub;
     ros::Subscriber sonar2_sub;
     ros::Publisher cmd_vel_pub;
 
     double pose;
-    double scan_data_[3] = {0.0, 0.0, 0.0};
+    // double scan_data_[3] = {0.0, 0.0, 0.0};
     double range1, range2;
 
-    void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+    // void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
     void sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
     void sonar2MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
@@ -72,8 +72,7 @@ Pr100Drive::~Pr100Drive()
 void Pr100Drive::init(void)
 {    
     // initialize subscriber
-    laser_sub = nh.subscribe("/pr100/laser/scan", 10, &Pr100Drive::laserScanMsgCallBack, this);
-    
+    // laser_sub = nh.subscribe("/pr100/laser/scan", 10, &Pr100Drive::laserScanMsgCallBack, this);    
     sonar1_sub = nh.subscribe("/pr100/sonar1", 10, &Pr100Drive::sonar1MsgCallBack, this);
     sonar2_sub = nh.subscribe("/pr100/sonar2", 10, &Pr100Drive::sonar2MsgCallBack, this);
     odom_sub = nh.subscribe("odom", 10, &Pr100Drive::odomMsgCallBack, this);
@@ -82,27 +81,27 @@ void Pr100Drive::init(void)
     cmd_vel_pub   = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
 }
 
-void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)    
-{
-    // Lidar have 360 degree of data, we take only three value
-    uint16_t scan_angle[3] = {0, 30, 330};
+// void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)    
+// {
+//     // Lidar have 360 degree of data, we take only three value
+//     uint16_t scan_angle[3] = {0, 30, 330};
     
-    // std::cout << "lasec scan = \n";
+//     // std::cout << "lasec scan = \n";
 
-    for (int num = 0; num < 3; num++)
-    {
-        if (std::isinf(msg->ranges.at(scan_angle[num])))
-        {
-            scan_data_[num] = msg->range_max;
-            // std::cout << "  " << scan_data_[num] << "\n";
-        }
-        else
-        {
-            scan_data_[num] = msg->ranges.at(scan_angle[num]);
-            // std::cout << "  " << scan_data_[num] << "\n";
-        }
-    }
-}
+//     for (int num = 0; num < 3; num++)
+//     {
+//         if (std::isinf(msg->ranges.at(scan_angle[num])))
+//         {
+//             scan_data_[num] = msg->range_max;
+//             // std::cout << "  " << scan_data_[num] << "\n";
+//         }
+//         else
+//         {
+//             scan_data_[num] = msg->ranges.at(scan_angle[num]);
+//             // std::cout << "  " << scan_data_[num] << "\n";
+//         }
+//     }
+// }
 
 void Pr100Drive::sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 {
@@ -150,9 +149,10 @@ void Pr100Drive::updatecommandVelocity(double linear, double angular)
 
 void Pr100Drive::controlLoop(void)
 {
-    if (range1 < DISTANCE_THRESH || range1 < DISTANCE_THRESH)
+    if (range1 < DISTANCE_THRESH || range2 < DISTANCE_THRESH)
     {
-        updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
+        updatecommandVelocity(0.0 , ANGULAR_VELOCITY);
+        // updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
         // std::cout << "Turn!\n";
     }
     else
@@ -164,10 +164,10 @@ void Pr100Drive::controlLoop(void)
 
 void Pr100Drive::showSensorData(void)
 {
-    std::cout << "scan data = \n";
-    std::cout << "  " << scan_data_[LEFT] << "\n";
-    std::cout << "  " << scan_data_[CENTER] << "\n";
-    std::cout << "  " << scan_data_[RIGHT] << "\n";
+    // std::cout << "scan data = \n";
+    // std::cout << "  " << scan_data_[LEFT] << "\n";
+    // std::cout << "  " << scan_data_[CENTER] << "\n";
+    // std::cout << "  " << scan_data_[RIGHT] << "\n";
 
     std::cout << "sonar1, sonar2 = \n"; 
     std::cout << "  " << range1 << "\n";
@@ -197,7 +197,7 @@ int main(int argc, char* argv[])
         pr100_drive->controlLoop();
 
         count++;
-        if (count >= 100)
+        if (count >= 50)
         {
             pr100_drive->showSensorData();
             count = 0;
