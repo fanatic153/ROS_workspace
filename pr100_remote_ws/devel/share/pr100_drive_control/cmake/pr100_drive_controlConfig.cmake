@@ -154,7 +154,7 @@ foreach(library ${libraries})
     set(lib_path "")
     set(lib "${library}-NOTFOUND")
     # since the path where the library is found is returned we have to iterate over the paths manually
-    foreach(path /home/janet/ROS_workspace/pr100_remote_ws/devel/lib;/home/janet/ROS_workspace/pr100_ws/devel/lib;/home/janet/ROS_workspace/ddrobot_ws/devel/lib;/home/janet/ROS_workspace/turtlebot_ws/devel/lib;/opt/ros/noetic/lib)
+    foreach(path /home/janet/ROS_workspace/pr100_remote_ws/devel/lib;/home/janet/ROS_workspace/pr100_remote_ws/devel/lib;/home/janet/ROS_workspace/pr100_ws/devel/lib;/home/janet/ROS_workspace/ddrobot_ws/devel/lib;/home/janet/ROS_workspace/turtlebot_ws/devel/lib;/opt/ros/noetic/lib)
       find_library(lib ${library}
         PATHS ${path}
         NO_DEFAULT_PATH NO_CMAKE_FIND_ROOT_PATH)
@@ -211,7 +211,7 @@ foreach(depend ${depends})
   _unpack_libraries_with_build_configuration(pr100_drive_control_LIBRARIES ${pr100_drive_control_LIBRARIES})
 
   _list_append_unique(pr100_drive_control_LIBRARY_DIRS ${${pr100_drive_control_dep}_LIBRARY_DIRS})
-  list(APPEND pr100_drive_control_EXPORTED_TARGETS ${${pr100_drive_control_dep}_EXPORTED_TARGETS})
+  _list_append_deduplicate(pr100_drive_control_EXPORTED_TARGETS ${${pr100_drive_control_dep}_EXPORTED_TARGETS})
 endforeach()
 
 set(pkg_cfg_extras "")

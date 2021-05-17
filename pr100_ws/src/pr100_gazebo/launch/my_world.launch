@@ -22,7 +22,9 @@
 
     <!-- <node name="pr100_spawn" pkg="gazebo_ros" type="spawn_model" output="screen"
         args="-urdf -param robot_description -model pr100" /> -->
-
+    
+    <node pkg="tf" type="static_transform_publisher" name="odom_to_footprint" args="0 0 0 0 0 0 /odom /footprint 40" />
+    
     <include file="$(find pr100_description)/launch/pr100_rviz.launch" />
 
 </launch>

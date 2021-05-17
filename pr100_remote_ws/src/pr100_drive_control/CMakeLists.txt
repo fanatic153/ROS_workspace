@@ -11,6 +11,11 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   rospy
   std_msgs
+  sensor_msgs
+  geometry_msgs
+  nav_msgs
+  tf
+  gazebo_ros
 )
 
 ## System dependencies are found with CMake's conventions
@@ -137,6 +142,9 @@ include_directories(
 
 add_executable(pr100_drive src/pr100_drive.cpp)
 target_link_libraries(pr100_drive ${catkin_LIBRARIES})
+
+add_executable(gridMap src/gridMap.cpp)
+target_link_libraries(gridMap ${catkin_LIBRARIES})
 
 
 ## Rename C++ executable without prefix
