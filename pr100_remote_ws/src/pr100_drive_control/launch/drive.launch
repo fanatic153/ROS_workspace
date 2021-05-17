@@ -2,13 +2,13 @@
 <launch>
 
   <!-- Combine joint values -->
-  <node name="pr100_drive_node" pkg="pr100_drive_control" type="pr100_drive"/>
+  <node name="pr100_drive_node" pkg="pr100_drive_control" type="pr100_drive" output="screen"/>
 
   <!-- publish a tf -->
   <node pkg="tf" type="static_transform_publisher" name="fixed_odom_to_grid" args="0 0 0 0 0 0 /grid /odom 40" />
   
   <!-- run gridMap node -->
-  <node name="gridMap_node" pkg="pr100_drive_control" type="gridMap"/>
+  <node name="gridMap_node" pkg="pr100_drive_control" type="gridMap" />
 
  
 </launch>

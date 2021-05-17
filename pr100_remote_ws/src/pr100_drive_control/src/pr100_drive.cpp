@@ -22,7 +22,7 @@
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 
-#define DISTANCE_THRESH 0.42 //0.5
+#define DISTANCE_THRESH 0.32 //0.42 //0.5
 
 class Pr100Drive
 {

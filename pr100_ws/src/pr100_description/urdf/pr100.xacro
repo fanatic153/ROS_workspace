@@ -11,7 +11,7 @@
     <xacro:property name="chassisMass" value="50"/>
 
     <xacro:property name="casterRadius" value="0.05"/>
-    <xacro:property name="casterMass" value="5"/>
+    <xacro:property name="casterMass" value="1"/>
 
     <!-- 0.05*0.1*0.5 * 5 -->
     <xacro:property name="wheelWidth" value="0.01"/>
@@ -65,14 +65,16 @@
     <!-- caster_wheel -->    
     <link name="caster_wheel">
         <collision>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <origin xyz="${-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <!-- <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/> -->
             <geometry>
             <sphere radius="${casterRadius}"/>
             </geometry>
         </collision>
         
-        <visual>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+        <visual>            
+            <origin xyz="${-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <!-- <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/> -->
             <geometry>
             <sphere radius="${casterRadius}"/>
             </geometry>
@@ -80,16 +82,46 @@
         </visual>
 
         <inertial>
-            <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <origin xyz="${-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <!-- <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/> -->
             <mass value="${casterMass}"/>
             <xacro:sphere_inertia m="${casterMass}" r="${casterRadius}"/>
         </inertial>
     </link>
 
-    <joint name="fixed" type="fixed">
+    <joint name="fixed_caster_joint" type="fixed">
         <parent link="chassis"/>
         <child link="caster_wheel"/>
     </joint>
+
+    <!-- caster_wheel 2 -->    
+    <!-- <link name="caster_wheel2">
+        <collision>
+            <origin xyz="${chassisLength/2-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <geometry>
+            <sphere radius="${casterRadius}"/>
+            </geometry>
+        </collision>
+        
+        <visual>            
+            <origin xyz="${chassisLength/2-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <geometry>
+            <sphere radius="${casterRadius}"/>
+            </geometry>
+            <material name="black"/>
+        </visual>
+
+        <inertial>
+            <origin xyz="${chassisLength/2-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
+            <mass value="${casterMass}"/>
+            <xacro:sphere_inertia m="${casterMass}" r="${casterRadius}"/>
+        </inertial>
+    </link>
+
+    <joint name="fixed_caster_joint2" type="fixed">
+        <parent link="chassis"/>
+        <child link="caster_wheel2"/>
+    </joint> -->
 
     
     <!-- right wheel link --> 
