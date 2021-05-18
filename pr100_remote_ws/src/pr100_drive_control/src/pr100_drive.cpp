@@ -1,11 +1,11 @@
 
 #include <ros/ros.h>
 
-// #include <sensor_msgs/LaserScan.h>
 #include <sensor_msgs/Range.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
 #include <time.h> 
+#include <unistd.h>
 
 #define DEG2RAD (M_PI / 180.0)
 #define RAD2DEG (180.0 / M_PI)
@@ -17,12 +17,15 @@
 #define LINEAR_VELOCITY  0.1
 #define ANGULAR_VELOCITY 0.1
 
+#define CLOCKWISE 1
+#define COUNTER_CLOCKWISE -1
+
 #define GET_TB3_DIRECTION 0
 #define TB3_DRIVE_FORWARD 1
 #define TB3_RIGHT_TURN    2
 #define TB3_LEFT_TURN     3
 
-#define DISTANCE_THRESH 0.32 //0.42 //0.5
+#define DISTANCE_THRESH 0.29 //0.32 //0.42 //0.5
 
 class Pr100Drive
 {
@@ -40,20 +43,25 @@ class Pr100Drive
     // Variables
     ros::NodeHandle nh;
     ros::Subscriber odom_sub;
-    // ros::Subscriber laser_sub;
     ros::Subscriber sonar1_sub;
     ros::Subscriber sonar2_sub;
     ros::Publisher cmd_vel_pub;
 
     double pose;
-    // double scan_data_[3] = {0.0, 0.0, 0.0};
     double range1, range2;
 
-    // void laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg);
+    clock_t clk_mark;
+    time_t t_mark;
+
     void sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
     void sonar2MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
     void updatecommandVelocity(double linear, double angular);
+
+    void turn_theta(double theta, int direction);
+    void go_forward(void);
+    void go_backward(void);
+    void stop(void);
     
 };
 
@@ -65,14 +73,14 @@ Pr100Drive::Pr100Drive()// : nh_priv_("~")
 
 Pr100Drive::~Pr100Drive()
 {        
+    updatecommandVelocity(0.0 , 0.0);
     ROS_INFO("pr100 Simulation Node Shutdown");
     ros::shutdown();        
 }
 
 void Pr100Drive::init(void)
 {    
-    // initialize subscriber
-    // laser_sub = nh.subscribe("/pr100/laser/scan", 10, &Pr100Drive::laserScanMsgCallBack, this);    
+    // initialize subscriber 
     sonar1_sub = nh.subscribe("/pr100/sonar1", 10, &Pr100Drive::sonar1MsgCallBack, this);
     sonar2_sub = nh.subscribe("/pr100/sonar2", 10, &Pr100Drive::sonar2MsgCallBack, this);
     odom_sub = nh.subscribe("odom", 10, &Pr100Drive::odomMsgCallBack, this);
@@ -80,28 +88,6 @@ void Pr100Drive::init(void)
     // initialize publishers
     cmd_vel_pub   = nh.advertise<geometry_msgs::Twist>("cmd_vel", 10);
 }
-
-// void Pr100Drive::laserScanMsgCallBack(const sensor_msgs::LaserScan::ConstPtr &msg)    
-// {
-//     // Lidar have 360 degree of data, we take only three value
-//     uint16_t scan_angle[3] = {0, 30, 330};
-    
-//     // std::cout << "lasec scan = \n";
-
-//     for (int num = 0; num < 3; num++)
-//     {
-//         if (std::isinf(msg->ranges.at(scan_angle[num])))
-//         {
-//             scan_data_[num] = msg->range_max;
-//             // std::cout << "  " << scan_data_[num] << "\n";
-//         }
-//         else
-//         {
-//             scan_data_[num] = msg->ranges.at(scan_angle[num]);
-//             // std::cout << "  " << scan_data_[num] << "\n";
-//         }
-//     }
-// }
 
 void Pr100Drive::sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg)
 {
@@ -133,26 +119,57 @@ void Pr100Drive::updatecommandVelocity(double linear, double angular)
   cmd_vel_pub.publish(cmd_vel);
 }
 
-// void Pr100Drive::controlLoop(void)
-// {
-//     if (scan_data_[LEFT] < DISTANCE_THRESH || scan_data_[CENTER] < DISTANCE_THRESH || scan_data_[RIGHT] < DISTANCE_THRESH)
-//     {
-//         updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
-//         // std::cout << "Turn!\n";
-//     }
-//     else
-//     {
-//         updatecommandVelocity(LINEAR_VELOCITY , 0.0);    
-//         // std::cout << "GO!\n";
-//     }
-// }
+void Pr100Drive::turn_theta(double theta, int direction)
+{
+    // double t_turn = (theta * DEG2RAD) / ANGULAR_VELOCITY;
+    unsigned int t_turn = 1000*(theta * DEG2RAD) / ANGULAR_VELOCITY;
+    // std::cout << "t_turn = " << t_turn << "\n";
+
+    t_mark = time(NULL);
+
+    updatecommandVelocity(0.0, direction * ANGULAR_VELOCITY);
+    usleep(t_turn);    // sleep in micro-sec
+    updatecommandVelocity(0.0, 0.0);
+
+    // std::cout << "time elapsed: " << time(NULL) - t_mark << "\n";
+    
+}
+
+void Pr100Drive::go_forward(void)
+{
+    updatecommandVelocity(LINEAR_VELOCITY , 0.0);
+}
+
+void Pr100Drive::go_backward(void)
+{
+    updatecommandVelocity((-1) * LINEAR_VELOCITY , 0.0);
+}
+
+void Pr100Drive::stop(void)
+{
+    updatecommandVelocity(0.0 , 0.0);  
+}
 
 void Pr100Drive::controlLoop(void)
 {
-    if (range1 < DISTANCE_THRESH || range2 < DISTANCE_THRESH)
+    double theta = 30;
+
+    if (range1 < 0.2 && range2 < 0.2)
     {
-        updatecommandVelocity(0.0 , ANGULAR_VELOCITY);
-        // updatecommandVelocity(-0.05 , ANGULAR_VELOCITY);
+        go_backward();
+    }
+    else if (range1 < DISTANCE_THRESH || range2 < DISTANCE_THRESH)
+    {
+        if (range1 > range2 + 0.05)
+        {
+            turn_theta(theta, CLOCKWISE);
+        }
+        else
+        {
+            turn_theta(theta, COUNTER_CLOCKWISE);             
+        }
+        
+        // updatecommandVelocity(0.0 , ANGULAR_VELOCITY);
         // std::cout << "Turn!\n";
     }
     else
@@ -164,18 +181,14 @@ void Pr100Drive::controlLoop(void)
 
 void Pr100Drive::showSensorData(void)
 {
-    // std::cout << "scan data = \n";
-    // std::cout << "  " << scan_data_[LEFT] << "\n";
-    // std::cout << "  " << scan_data_[CENTER] << "\n";
-    // std::cout << "  " << scan_data_[RIGHT] << "\n";
-
     std::cout << "sonar1, sonar2 = \n"; 
     std::cout << "  " << range1 << "\n";
     std::cout << "  " << range2 << "\n";
 
     std::cout << "pose, prev = \n"; 
     std::cout << "  " << pose << "\n";
-    // std::cout << "  " << prev_tb3_pose_ << "\n";
+    // std::cout << "  " << prev_tb3_pose_ << "\n";    
+
     std::cout << "\n";
 }
 
@@ -191,16 +204,16 @@ int main(int argc, char* argv[])
     ros::Rate loop_rate(125);
 
     srand( time(NULL) );
-    int count = 0;
+    int count = 0; bool flag = false;
     while (ros::ok())
-    {    
+    {
         pr100_drive->controlLoop();
 
         count++;
         if (count >= 50)
         {
             pr100_drive->showSensorData();
-            count = 0;
+            count = 0;            
         }        
 
         ros::spinOnce();
