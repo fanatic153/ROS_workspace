@@ -11,7 +11,7 @@
     <xacro:property name="chassisMass" value="50"/>
 
     <xacro:property name="casterRadius" value="0.05"/>
-    <xacro:property name="casterMass" value="1"/>
+    <xacro:property name="casterMass" value="5"/>
 
     <!-- 0.05*0.1*0.5 * 5 -->
     <xacro:property name="wheelWidth" value="0.01"/>
@@ -36,22 +36,27 @@
     <link name='chassis'>
         <collision> 
             <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+            <!-- <origin xyz="0 0 0" rpy="0 0 0"/>  -->
             <geometry> 
-            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+                <mesh filename="package://pr100_description/meshes/cylinder.stl" scale="0.001 0.001 0.001"/>    
+                <!-- <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/>  -->
             </geometry> 
         </collision>
         <visual> 
             <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+            <!-- <origin xyz="0 0 0" rpy="0 0 0"/>  -->
             <geometry> 
-            <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/> 
+                <mesh filename="package://pr100_description/meshes/cylinder.stl" scale="0.001 0.001 0.001"/>
+                <!-- <box size="${chassisLength} ${chassisWidth} ${chassisHeight}"/>  -->
             </geometry> 
             <material name="white"/>
         </visual>
         <inertial> 
             <!-- <origin xyz="0 0 ${wheelRadius}" rpy="0 0 0"/>  -->
-            <origin xyz="0 0 0" rpy="0 0 0"/> 
+            <origin xyz="0 0 -0.15" rpy="0 0 0"/> 
+            <!-- <origin xyz="0 0 0" rpy="0 0 0"/>  -->
             <mass value="${chassisMass}"/> 
             <xacro:box_inertia m="${chassisMass}" x="${chassisLength}" y="${chassisWidth}" z="${chassisHeight}"/>
         </inertial>
@@ -67,16 +72,16 @@
         <collision>
             <origin xyz="${-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
             <!-- <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/> -->
-            <geometry>
-            <sphere radius="${casterRadius}"/>
+            <geometry>                
+                <sphere radius="${casterRadius}"/>
             </geometry>
         </collision>
         
         <visual>            
             <origin xyz="${-casterRadius} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/>
             <!-- <origin xyz="${casterRadius-chassisLength/2} 0 ${casterRadius-chassisHeight+2*wheelRadius}" rpy="0 0 0"/> -->
-            <geometry>
-            <sphere radius="${casterRadius}"/>
+            <geometry>                
+                <sphere radius="${casterRadius}"/>
             </geometry>
             <material name="black"/>
         </visual>

@@ -143,6 +143,9 @@ include_directories(
 add_executable(pr100_drive src/pr100_drive.cpp)
 target_link_libraries(pr100_drive ${catkin_LIBRARIES})
 
+add_executable(pr100_test src/pr100_test_control.cpp)
+target_link_libraries(pr100_test ${catkin_LIBRARIES})
+
 add_executable(gridMap src/gridMap.cpp)
 target_link_libraries(gridMap ${catkin_LIBRARIES})
 
