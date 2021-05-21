@@ -4,28 +4,29 @@
 #include <sensor_msgs/Range.h>
 #include <geometry_msgs/Twist.h>
 #include <nav_msgs/Odometry.h>
-#include <time.h> 
+#include <time.h>
 #include <unistd.h>
 
+// constants
 #define DEG2RAD (M_PI / 180.0)
 #define RAD2DEG (180.0 / M_PI)
+#define CLOCKWISE           1
+#define COUNTER_CLOCKWISE  -1
 
-#define CENTER 0
-#define LEFT   1
-#define RIGHT  2
+// state machine
+#define STATE_NORMAL   0
+#define STATE_NARROW   1
+#define STATE_HIT      2
+#define STATE_ESCAPE   3
 
+// speed
 #define LINEAR_VELOCITY  0.1
 #define ANGULAR_VELOCITY 0.1
 
-#define CLOCKWISE 1
-#define COUNTER_CLOCKWISE -1
+// thresholds
+#define THRESH_DIST 0.20 //0.32 //0.42 //0.5
+#define THRESH_DIST_TIGHT 0.07
 
-#define GET_TB3_DIRECTION 0
-#define TB3_DRIVE_FORWARD 1
-#define TB3_RIGHT_TURN    2
-#define TB3_LEFT_TURN     3
-
-#define DISTANCE_THRESH 0.29 //0.32 //0.42 //0.5
 
 class Pr100Drive
 {
@@ -34,9 +35,18 @@ class Pr100Drive
     Pr100Drive();
     ~Pr100Drive();
 
+    int currentState = STATE_NORMAL;
+
     void init(void);
     void controlLoop(void);
     void showSensorData(void);
+    void showState(void);
+
+    // state mode
+    void stateNormal(void);
+    void stateNarrow(void);
+    void stateHit(void);
+    void stateEscape(void);
 
  private:
 
@@ -58,11 +68,11 @@ class Pr100Drive
     void odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg);
     void updatecommandVelocity(double linear, double angular);
 
-    void turn_theta(double theta, int direction);
-    void go_forward(void);
-    void go_backward(void);
+    void turnTheta(double theta, int direction);
+    void goForward(void);
+    void goBackward(void);
     void stop(void);
-    
+
 };
 
 Pr100Drive::Pr100Drive()// : nh_priv_("~")
@@ -119,10 +129,10 @@ void Pr100Drive::updatecommandVelocity(double linear, double angular)
   cmd_vel_pub.publish(cmd_vel);
 }
 
-void Pr100Drive::turn_theta(double theta, int direction)
+void Pr100Drive::turnTheta(double theta, int direction)
 {
     // double t_turn = (theta * DEG2RAD) / ANGULAR_VELOCITY;
-    unsigned int t_turn = 1000*(theta * DEG2RAD) / ANGULAR_VELOCITY;
+    unsigned int t_turn = 100000*(theta * DEG2RAD) / ANGULAR_VELOCITY;
     // std::cout << "t_turn = " << t_turn << "\n";
 
     t_mark = time(NULL);
@@ -135,12 +145,12 @@ void Pr100Drive::turn_theta(double theta, int direction)
     
 }
 
-void Pr100Drive::go_forward(void)
+void Pr100Drive::goForward(void)
 {
     updatecommandVelocity(LINEAR_VELOCITY , 0.0);
 }
 
-void Pr100Drive::go_backward(void)
+void Pr100Drive::goBackward(void)
 {
     updatecommandVelocity((-1) * LINEAR_VELOCITY , 0.0);
 }
@@ -150,32 +160,110 @@ void Pr100Drive::stop(void)
     updatecommandVelocity(0.0 , 0.0);  
 }
 
+void Pr100Drive::stateNormal(void)
+{
+    goForward();
+}
+
+void Pr100Drive::stateNarrow(void)
+{
+    goForward();
+}
+
+void Pr100Drive::stateHit(void)
+{
+    double theta = 30;
+    if (range1 > range2)
+    {
+        turnTheta(theta, CLOCKWISE);
+    }
+    else
+    {
+        turnTheta(theta, COUNTER_CLOCKWISE);             
+    }
+}
+
+void Pr100Drive::stateEscape(void)
+{
+    goBackward();
+    usleep(1000000);    // sleep in micro-sec
+
+    double theta = 180;
+    turnTheta(theta, CLOCKWISE);
+    usleep(1000000);    // sleep in micro-sec
+}
+
 void Pr100Drive::controlLoop(void)
 {
     double theta = 30;
 
-    if (range1 < 0.2 && range2 < 0.2)
+    currentState = STATE_NORMAL;
+
+    // going into an obstacle
+    if (range1 < THRESH_DIST && range2 < THRESH_DIST)
     {
-        go_backward();
+        currentState = STATE_NARROW;
+
+        // straight hitting into an obstacle
+        if (range1 < THRESH_DIST_TIGHT && range2 < THRESH_DIST_TIGHT)
+        {
+            currentState = STATE_ESCAPE;
+        }
+    }    
+    // getting close to an obstale
+    else if (range1 < THRESH_DIST || range2 < THRESH_DIST)
+    {
+        currentState = STATE_HIT;
     }
-    else if (range1 < DISTANCE_THRESH || range2 < DISTANCE_THRESH)
-    {
-        if (range1 > range2 + 0.05)
-        {
-            turn_theta(theta, CLOCKWISE);
-        }
-        else
-        {
-            turn_theta(theta, COUNTER_CLOCKWISE);             
-        }
+}
+
+// void Pr100Drive::controlLoop(void)
+// {
+//     double theta = 30;
+
+//     if (range1 < 0.2 && range2 < 0.2)
+//     {
+//         goBackward();
+//     }
+//     else if (range1 < DISTANCE_THRESH || range2 < DISTANCE_THRESH)
+//     {
+//         if (range1 > range2)
+//         {
+//             turnTheta(theta, CLOCKWISE);
+//         }
+//         else
+//         {
+//             turnTheta(theta, COUNTER_CLOCKWISE);             
+//         }
         
-        // updatecommandVelocity(0.0 , ANGULAR_VELOCITY);
-        // std::cout << "Turn!\n";
-    }
-    else
+//         // updatecommandVelocity(0.0 , ANGULAR_VELOCITY);
+//         // std::cout << "Turn!\n";
+//     }
+//     else
+//     {
+//         updatecommandVelocity(LINEAR_VELOCITY , 0.0);    
+//         // std::cout << "GO!\n";
+//     }
+// }
+
+void Pr100Drive::showState(void)
+{    
+    switch (currentState)
     {
-        updatecommandVelocity(LINEAR_VELOCITY , 0.0);    
-        // std::cout << "GO!\n";
+        case STATE_NORMAL:
+            std::cout << "STATE_NORMAL!\n";            
+            break;
+        case STATE_HIT:            
+            std::cout << "STATE_HIT!\n"; 
+            break;
+        case STATE_NARROW:
+            std::cout << "STATE_NARROW!\n"; 
+            break;
+        case STATE_ESCAPE:
+            std::cout << "STATE_ESCAPE!\n"; 
+            break;
+        default: 
+            break;
     }
 }
 
@@ -205,16 +293,48 @@ int main(int argc, char* argv[])
 
     srand( time(NULL) );
     int count = 0; bool flag = false;
+    int prevState = pr100_drive->currentState;
     while (ros::ok())
-    {
-        pr100_drive->controlLoop();
-
+    {        
         count++;
         if (count >= 50)
         {
             pr100_drive->showSensorData();
+            pr100_drive->showState();
             count = 0;            
-        }        
+        }
+
+        if (prevState != pr100_drive->currentState)
+        {
+            pr100_drive->showState();
+        }
+
+        // state control
+        pr100_drive->controlLoop();
+        // state machine
+        switch (pr100_drive->currentState)
+        {
+            case STATE_NORMAL:                
+                pr100_drive->stateNormal();
+                break;
+
+            case STATE_HIT:            
+                pr100_drive->stateHit();
+                break;
+
+            case STATE_NARROW:
+                pr100_drive->stateNarrow();
+                break;
+
+            case STATE_ESCAPE:
+                pr100_drive->stateEscape();
+                break;
+
+            default: 
+                break;
+        }
+        // saving state
+        prevState = pr100_drive->currentState;
 
         ros::spinOnce();
         loop_rate.sleep();
