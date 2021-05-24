@@ -16,7 +16,7 @@
 // state machine
 #define STATE_NORMAL   0
 #define STATE_NARROW   1
-#define STATE_HIT      2
+#define STATE_TURN      2
 #define STATE_ESCAPE   3
 
 // speed
@@ -26,7 +26,8 @@
 // thresholds
 #define THRESH_DIST 0.20 //0.32 //0.42 //0.5
 #define THRESH_DIST_TIGHT 0.07
-
+#define THRESH_POSE 0.005
+#define THRESHOLD_CHECK_POSE 2000
 
 class Pr100Drive
 {
@@ -35,17 +36,18 @@ class Pr100Drive
     Pr100Drive();
     ~Pr100Drive();
 
-    int currentState = STATE_NORMAL;
+    int currentState = STATE_NORMAL;    
 
     void init(void);
     void controlLoop(void);
     void showSensorData(void);
     void showState(void);
+    void updatePose(void);
 
     // state mode
     void stateNormal(void);
     void stateNarrow(void);
-    void stateHit(void);
+    void stateTurn(void);
     void stateEscape(void);
 
  private:
@@ -58,9 +60,10 @@ class Pr100Drive
     ros::Publisher cmd_vel_pub;
 
     double pose;
+    double roboX, roboY, roboX_prev, roboY_prev;
     double range1, range2;
-
-    clock_t clk_mark;
+    
+    int update_time = 0;
     time_t t_mark;
 
     void sonar1MsgCallBack(const sensor_msgs::Range::ConstPtr &msg);
@@ -116,6 +119,19 @@ void Pr100Drive::odomMsgCallBack(const nav_msgs::Odometry::ConstPtr &msg)
 
     pose = atan2(siny, cosy);
 
+    roboX = msg->pose.pose.position.x;
+    roboY = msg->pose.pose.position.y;
+
+
+    if (update_time <= 0)
+    {
+        std::cout << "update: pose_prev \n";
+        updatePose();
+
+        update_time = THRESHOLD_CHECK_POSE;
+    }     
+    update_time--; 
+
     // std::cout << "pose = " << pose << "\n";        
 }
 
@@ -170,7 +186,7 @@ void Pr100Drive::stateNarrow(void)
     goForward();
 }
 
-void Pr100Drive::stateHit(void)
+void Pr100Drive::stateTurn(void)
 {
     double theta = 30;
     if (range1 > range2)
@@ -213,7 +229,14 @@ void Pr100Drive::controlLoop(void)
     // getting close to an obstale
     else if (range1 < THRESH_DIST || range2 < THRESH_DIST)
     {
-        currentState = STATE_HIT;
+        currentState = STATE_TURN;
+    }
+
+    // stucked
+    if ((roboX - roboX_prev) * (roboX - roboX_prev) < THRESH_POSE * THRESH_POSE && 
+        (roboY - roboY_prev) * (roboY - roboY_prev) < THRESH_POSE * THRESH_POSE)
+    {
+        currentState = STATE_ESCAPE;
     }
 }
 
@@ -253,8 +276,8 @@ void Pr100Drive::showState(void)
         case STATE_NORMAL:
             std::cout << "STATE_NORMAL!\n";            
             break;
-        case STATE_HIT:            
-            std::cout << "STATE_HIT!\n"; 
+        case STATE_TURN:            
+            std::cout << "STATE_TURN!\n"; 
             break;
         case STATE_NARROW:
             std::cout << "STATE_NARROW!\n"; 
@@ -267,15 +290,23 @@ void Pr100Drive::showState(void)
     }
 }
 
+void Pr100Drive::updatePose(void)
+{
+    roboX_prev = roboX;
+    roboY_prev = roboY;
+}
+
 void Pr100Drive::showSensorData(void)
 {
-    std::cout << "sonar1, sonar2 = \n"; 
+    std::cout << "sonar1, sonar2 = \n";
     std::cout << "  " << range1 << "\n";
     std::cout << "  " << range2 << "\n";
 
     std::cout << "pose, prev = \n"; 
     std::cout << "  " << pose << "\n";
     // std::cout << "  " << prev_tb3_pose_ << "\n";    
+    std::cout << "x, y = " << roboX << ", " << roboY << "\n";  
+    std::cout << "     = " << roboX_prev << ", " << roboY_prev << "\n";      
 
     std::cout << "\n";
 }
@@ -292,8 +323,10 @@ int main(int argc, char* argv[])
     ros::Rate loop_rate(125);
 
     srand( time(NULL) );
-    int count = 0; bool flag = false;
+    int count = 0;
+    
     int prevState = pr100_drive->currentState;
+    pr100_drive->updatePose();
     while (ros::ok())
     {        
         count++;
@@ -301,12 +334,8 @@ int main(int argc, char* argv[])
         {
             pr100_drive->showSensorData();
             pr100_drive->showState();
-            count = 0;            
-        }
 
-        if (prevState != pr100_drive->currentState)
-        {
-            pr100_drive->showState();
+            count = 0;
         }
 
         // state control
@@ -314,12 +343,12 @@ int main(int argc, char* argv[])
         // state machine
         switch (pr100_drive->currentState)
         {
-            case STATE_NORMAL:                
+            case STATE_NORMAL:
                 pr100_drive->stateNormal();
                 break;
 
-            case STATE_HIT:            
-                pr100_drive->stateHit();
+            case STATE_TURN:
+                pr100_drive->stateTurn();
                 break;
 
             case STATE_NARROW:
@@ -330,8 +359,14 @@ int main(int argc, char* argv[])
                 pr100_drive->stateEscape();
                 break;
 
-            default: 
+            default:
                 break;
+        }
+
+        // show switched state
+        if (prevState != pr100_drive->currentState)
+        {
+            pr100_drive->showState();
         }
         // saving state
         prevState = pr100_drive->currentState;
