@@ -11,6 +11,12 @@
   <!-- Combine joint values -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
 
+
+<!-- for a correct TF tree with gridMap
+  <node pkg="tf" type="static_transform_publisher" name="grid_to_odom" args="0 0 0 0 0 0 /grid /odom 40" />
+  <node pkg="tf" type="static_transform_publisher" name="odom_to_footprint" args="0 0 0 0 0 0 /odom /footprint 40" />
+-->
+
   <!-- Show in Rviz   -->
   <!-- <node name="rviz" pkg="rviz" type="rviz"/> -->
   <node name="rviz" pkg="rviz" type="rviz" args="-d $(find pr100_description)/launch/pr100.rviz"/>

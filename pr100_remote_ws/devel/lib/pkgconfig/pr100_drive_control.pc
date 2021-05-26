@@ -3,6 +3,6 @@ prefix=/home/janet/ROS_workspace/pr100_remote_ws/devel
 Name: pr100_drive_control
 Description: Description of pr100_drive_control
 Version: 0.0.0
-Cflags: 
+Cflags: -I/home/janet/ROS_workspace/pr100_remote_ws/src/pr100_drive_control/include
 Libs: -L${prefix}/lib 
 Requires: 

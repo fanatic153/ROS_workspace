@@ -108,11 +108,12 @@ find_package(catkin REQUIRED COMPONENTS
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-#  INCLUDE_DIRS include
+ INCLUDE_DIRS include
 #  LIBRARIES pr100_drive_control
 #  CATKIN_DEPENDS roscpp rospy std_msgs
 #  DEPENDS system_lib
 )
+
 
 ###########
 ## Build ##
@@ -143,7 +144,7 @@ include_directories(
 add_executable(pr100_drive src/pr100_drive.cpp)
 target_link_libraries(pr100_drive ${catkin_LIBRARIES})
 
-add_executable(pr100_test src/pr100_test_control.cpp)
+add_executable(pr100_test src/pr100_drive_test.cpp src/controls/control.cpp)
 target_link_libraries(pr100_test ${catkin_LIBRARIES})
 
 add_executable(gridMap src/gridMap.cpp)

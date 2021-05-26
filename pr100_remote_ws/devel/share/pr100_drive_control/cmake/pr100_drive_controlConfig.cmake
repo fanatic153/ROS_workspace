@@ -91,9 +91,9 @@ endif()
 # flag project as catkin-based to distinguish if a find_package()-ed project is a catkin project
 set(pr100_drive_control_FOUND_CATKIN_PROJECT TRUE)
 
-if(NOT " " STREQUAL " ")
+if(NOT "/home/janet/ROS_workspace/pr100_remote_ws/src/pr100_drive_control/include " STREQUAL " ")
   set(pr100_drive_control_INCLUDE_DIRS "")
-  set(_include_dirs "")
+  set(_include_dirs "/home/janet/ROS_workspace/pr100_remote_ws/src/pr100_drive_control/include")
   if(NOT " " STREQUAL " ")
     set(_report "Check the issue tracker '' and consider creating a ticket if the problem has not been reported yet.")
   elseif(NOT " " STREQUAL " ")
