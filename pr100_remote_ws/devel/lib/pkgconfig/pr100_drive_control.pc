@@ -5,4 +5,4 @@ Description: Description of pr100_drive_control
 Version: 0.0.0
 Cflags: -I/home/janet/ROS_workspace/pr100_remote_ws/src/pr100_drive_control/include
 Libs: -L${prefix}/lib 
-Requires: 
+Requires: roscpp rospy std_msgs pcl_conversions pcl_ros

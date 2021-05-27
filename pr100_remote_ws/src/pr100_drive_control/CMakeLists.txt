@@ -16,6 +16,8 @@ find_package(catkin REQUIRED COMPONENTS
   nav_msgs
   tf
   gazebo_ros
+  pcl_ros
+  pcl_conversions
 )
 
 ## System dependencies are found with CMake's conventions
@@ -110,7 +112,7 @@ find_package(catkin REQUIRED COMPONENTS
 catkin_package(
  INCLUDE_DIRS include
 #  LIBRARIES pr100_drive_control
-#  CATKIN_DEPENDS roscpp rospy std_msgs
+ CATKIN_DEPENDS roscpp rospy std_msgs pcl_conversions pcl_ros
 #  DEPENDS system_lib
 )
 
@@ -150,6 +152,8 @@ target_link_libraries(pr100_test ${catkin_LIBRARIES})
 add_executable(gridMap src/gridMap.cpp)
 target_link_libraries(gridMap ${catkin_LIBRARIES})
 
+add_executable(pointCloud src/pointCloud.cpp)
+target_link_libraries(pointCloud ${catkin_LIBRARIES})
 
 ## Rename C++ executable without prefix
 ## The above recommended prefix causes long target names, the following renames the
