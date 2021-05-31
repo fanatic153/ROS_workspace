@@ -15,23 +15,52 @@ int main (int argc, char **argv)
     sensor_msgs::PointCloud2 output;      // the "cloud" topic output msg
  
     // Fill in the cloud data
-    cloud.width  = 100;  // total number of points in the cloud
+    cloud.width  = 5;  // total number of points in the cloud
     cloud.height = 1;   // total number of rows
     cloud.points.resize(cloud.width * cloud.height);  // stretched to 1D array
  
     for (size_t i = 0; i < cloud.points.size (); ++i)
     {
-        cloud.points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
-        cloud.points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
-        cloud.points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
-        // cloud.points[i].x = i;//1024 * rand () / (RAND_MAX + 1.0f);
-        // cloud.points[i].y = i; //1024 * rand () / (RAND_MAX + 1.0f);
-        // cloud.points[i].z = i; //1024 * rand () / (RAND_MAX + 1.0f);
+        // cloud.points[i].x = 1024 * rand () / (RAND_MAX + 1.0f);
+        // cloud.points[i].y = 1024 * rand () / (RAND_MAX + 1.0f);
+        // cloud.points[i].z = 1024 * rand () / (RAND_MAX + 1.0f);
+        cloud.points[i].x = i;//1024 * rand () / (RAND_MAX + 1.0f);
+        cloud.points[i].y = i; //1024 * rand () / (RAND_MAX + 1.0f);
+        cloud.points[i].z = i; //1024 * rand () / (RAND_MAX + 1.0f);
         std::cout << cloud.points[i].x << "\n";
     }
+
+    //////////////// 
+    pcl::PointCloud<pcl::PointXYZ>::Ptr cloudPtr( new pcl::PointCloud<pcl::PointXYZ> (cloud) );
+    // pcl::PointCloud<pcl::PointXYZ>::iterator index = cloudPtr->begin() + 2;
+    // cloudPtr->erase(index); 
+
+    //
+    // for (pcl::PointCloud<pcl::PointXYZRGB>::iterator it = cloudPtr->begin(); it != cloudPtr->end(); it++) {
+    //     if (it->z < 4.0) {
+    //         cloudPtr->erase(it);
+    //     }
+    // }
+    for(int nIndex = 0;nIndex < cloudPtr->points.size(); nIndex++)
+    {
+        cloudPtr->points[nIndex].x;
+        cloudPtr->points[nIndex].y;
+        cloudPtr->points[nIndex].z;
+
+        if (cloudPtr->points[nIndex].x == 2.0) {
+            pcl::PointCloud<pcl::PointXYZ>::iterator index = cloudPtr->begin() + nIndex;
+            cloudPtr->erase(index); 
+        }
+    }
+
+    
+
+    /////////////
+
  
     //Convert the cloud to ROS message
-    pcl::toROSMsg(cloud, output);
+    // pcl::toROSMsg(cloud, output);   // pub the original cloud
+    pcl::toROSMsg(*cloudPtr, output);  // pub the pointer
     output.header.frame_id = "cloud";
  
     ros::Rate loop_rate(1);
