@@ -28,6 +28,13 @@
       <pose>1 1 0 0 0 0</pose>
     </include>
     -->
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>0.0 0.0 17.0 0 1.5708 0</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
+    </gui>
     
 
 
