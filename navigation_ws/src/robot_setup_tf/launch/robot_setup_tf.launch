@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<launch>
+
+  <node name="robot_tf_publlisher" pkg="robot_setup_tf" type="tf_broadcaster" output="screen"/>
+  <node name="robot_tf_listener" pkg="robot_setup_tf" type="tf_listener" output="screen"/>
+
+  <node name="laser_scan_publisher" pkg="robot_setup_tf" type="laser_pub" />
+  <node name="point_cloud_publisher" pkg="robot_setup_tf" type="pointCloud_pub" />
+
+</launch>
+
