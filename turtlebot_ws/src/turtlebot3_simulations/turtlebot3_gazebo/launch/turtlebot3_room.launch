@@ -1,5 +1,6 @@
 <launch>
-  <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/>
+  <!-- <arg name="model" default="$(env TURTLEBOT3_MODEL)" doc="model type [burger, waffle, waffle_pi]"/> -->
+  <arg name="model" default="burger"/>
   <arg name="x_pos" default="0.0"/>
   <arg name="y_pos" default="0.0"/>
   <arg name="z_pos" default="0.0"/>
@@ -23,10 +24,10 @@
   <node name="gridMap_node" pkg="turtlebot3_gazebo" type="gridMap"/>
 
   <!-- choose one below: turtlebot movement -->
-  <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" />
-  <!-- <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" /> -->
+  <!-- <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_simulation.launch" /> -->
+  <include file="$(find turtlebot3_teleop)/launch/turtlebot3_teleop_key.launch" />
 
-  <!-- choose one below: rviz or slam -->
+  <!-- choose one below: rviz or slam mapping -->
   <!-- <include file="$(find turtlebot3_slam)/launch/turtlebot3_slam.launch" /> -->
   <include file="$(find turtlebot3_gazebo)/launch/turtlebot3_gazebo_rviz.launch" />
 
@@ -34,4 +35,5 @@
 </launch>
 
 <!-- export TURTLEBOT3_MODEL=waffle_pi -->
+<!-- export TURTLEBOT3_MODEL=burger -->
 <!-- cp ~/share/IEC_room.dae src/turtlebot3_simulations/turtlebot3_gazebo/models/room/meshes/IEC_room.dae -->
